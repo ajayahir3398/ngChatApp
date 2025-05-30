@@ -1,0 +1,24 @@
+<div class="chat-list">
+  <div *ngFor="let chat of chats" 
+       class="chat-item"
+       [class.active]="selectedUser?.id === chat.id"
+       (click)="selectChat(chat)">
+    <div class="chat-content">
+      <div class="avatar">
+        <span>{{ chat.avatar }}</span>
+      </div>
+      <div class="chat-details">
+        <div class="chat-header">
+          <p class="name">{{ chat.name }}</p>
+          <p class="time">{{ chat.time }}</p>
+        </div>
+        <div class="chat-footer">
+          <p class="message">{{ chat.lastMessage }}</p>
+          <div *ngIf="chat.unread" class="unread-badge">
+            {{ chat.unread }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,45 @@
+<div class="home-container">
+  <div class="chat-list-container" [class.hidden]="showChatView">
+    <div class="chat-list-header">
+      <div class="profile-info">
+        <div class="profile-avatar">
+          <span>M</span>
+        </div>
+        <div class="profile-details">
+          <h1>Mikael Dan</h1>
+          <p>Online</p>
+        </div>
+      </div>
+    </div>
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" 
+               placeholder="Search chats..." 
+               [(ngModel)]="searchQuery"
+               (input)="onSearch()"
+               (blur)="onSearchBlur()">
+        <div class="search-suggestions" *ngIf="showSuggestions && searchSuggestions.length > 0">
+          <div class="suggestion-item" 
+               *ngFor="let user of searchSuggestions"
+               (click)="onSuggestionClick(user)">
+            <div class="suggestion-avatar">
+              <span>{{ user.avatar }}</span>
+            </div>
+            <div class="suggestion-details">
+              <h3>{{ user.name }}</h3>
+              <p>{{ user.status }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-list-content">
+      <app-chat-list></app-chat-list>
+    </div>
+  </div>
+
+  <div class="chat-view-container" [class.hidden]="!showChatView">
+    <app-chat-view (backClick)="onBackClick()"></app-chat-view>
+  </div>
+</div> 

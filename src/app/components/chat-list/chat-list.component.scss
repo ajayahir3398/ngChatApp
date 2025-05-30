@@ -1,0 +1,137 @@
+.chat-list {
+  height: 100vh;
+  overflow-y: auto;
+  background-color: white;
+}
+
+.chat-item {
+  padding: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #e5e7eb;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+
+  &.active {
+    background-color: #eff6ff;
+    border-left: 3px solid #3b82f6;
+  }
+}
+
+.chat-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 3rem;
+  height: 3rem;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar span {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.chat-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.chat-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.message {
+  font-size: 0.875rem;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unread-badge {
+  margin-left: 0.5rem;
+  padding: 0.125rem 0.5rem;
+  background-color: #dbeafe;
+  color: #1e40af;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+}
+
+// Responsive styles
+@media screen and (max-width: 768px) {
+  .chat-list {
+    height: calc(100vh - 60px); // Adjust for mobile header if needed
+  }
+
+  .chat-item {
+    padding: 0.75rem;
+  }
+
+  .avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .name {
+    font-size: 0.8125rem;
+  }
+
+  .message {
+    font-size: 0.8125rem;
+  }
+}
+
+// Large screen styles
+@media screen and (min-width: 1400px) {
+  .chat-item {
+    padding: 1.25rem;
+  }
+
+  .avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .name {
+    font-size: 1rem;
+  }
+
+  .message {
+    font-size: 0.9375rem;
+  }
+} 

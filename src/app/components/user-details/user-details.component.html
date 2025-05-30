@@ -1,0 +1,48 @@
+<div class="user-details-panel">
+  <div class="user-details-header">
+    <button class="back-button" (click)="onBackClick()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+    <h2>User Details</h2>
+    <button class="close-button" (click)="onBackClick()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  
+  <div class="user-profile">
+    <div class="large-avatar">
+      <span>{{ user.avatar }}</span>
+    </div>
+    <h1>{{ user.name }}</h1>
+    <p class="status" [class.online]="user.status === 'online'">
+      {{ user.status }}
+    </p>
+  </div>
+
+  <div class="user-info-section">
+    <h3>Contact Information</h3>
+    <div class="info-item">
+      <i class="fas fa-envelope"></i>
+      <span>{{ user.name.toLowerCase().replace(' ', '.') }}&#64;example.com</span>
+    </div>
+    <div class="info-item">
+      <i class="fas fa-phone"></i>
+      <span>+1 (555) 123-4567</span>
+    </div>
+  </div>
+
+  <div class="user-actions">
+    <button class="action-button">
+      <i class="fas fa-phone"></i>
+      <span>Voice Call</span>
+    </button>
+    <button class="action-button">
+      <i class="fas fa-video"></i>
+      <span>Video Call</span>
+    </button>
+    <button class="action-button">
+      <i class="fas fa-envelope"></i>
+      <span>Send Email</span>
+    </button>
+  </div>
+</div> 
