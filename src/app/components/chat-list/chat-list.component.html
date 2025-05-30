@@ -2,11 +2,15 @@
   <div *ngFor="let chat of chats" 
        class="chat-item"
        [class.active]="selectedUser?.id === chat.id"
-       (click)="selectChat(chat)">
+       (click)="selectChat(chat)"
+       pRipple>
     <div class="chat-content">
-      <div class="avatar">
-        <span>{{ chat.avatar }}</span>
-      </div>
+      <p-avatar 
+        [label]="chat.avatar || chat.name.charAt(0) || 'U'"
+        size="large"
+        [style]="{'background-color': '#3b82f6'}"
+        shape="circle">
+      </p-avatar>
       <div class="chat-details">
         <div class="chat-header">
           <p class="name">{{ chat.name }}</p>
@@ -14,9 +18,7 @@
         </div>
         <div class="chat-footer">
           <p class="message">{{ chat.lastMessage }}</p>
-          <div *ngIf="chat.unread" class="unread-badge">
-            {{ chat.unread }}
-          </div>
+          <p-badge *ngIf="chat.unread" [value]="chat.unread.toString()" severity="danger"></p-badge>
         </div>
       </div>
     </div>

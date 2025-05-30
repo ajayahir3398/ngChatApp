@@ -24,7 +24,9 @@ export class ChatViewComponent implements OnInit {
     this.chatService.selectedUser$.subscribe(user => {
       this.selectedUser = user;
       if (user) {
-        this.messages = this.chatService.getMessagesForUser(user.id);
+        this.chatService.getMessagesForUser(user.id).subscribe(messages => {
+          this.messages = messages;
+        });
       }
     });
   }
@@ -32,7 +34,9 @@ export class ChatViewComponent implements OnInit {
   sendMessage() {
     if (this.newMessage.trim() && this.selectedUser) {
       this.chatService.sendMessage(this.newMessage, this.selectedUser.id);
-      this.messages = this.chatService.getMessagesForUser(this.selectedUser.id);
+      this.chatService.getMessagesForUser(this.selectedUser.id).subscribe(messages => {
+        this.messages = messages;
+      });
       this.newMessage = '';
     }
   }

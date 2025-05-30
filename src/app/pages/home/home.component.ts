@@ -1,15 +1,30 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ChatListComponent } from '../../components/chat-list/chat-list.component';
 import { ChatViewComponent } from '../../components/chat-view/chat-view.component';
 import { ChatService } from '../../services/chat.service';
 import { ChatUser } from '../../services/chat.service';
+import { AuthService } from '../../services/auth.service';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { AvatarModule } from 'primeng/avatar';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatListComponent, ChatViewComponent],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    ChatListComponent, 
+    ChatViewComponent,
+    ButtonModule,
+    InputTextModule,
+    AvatarModule,
+    OverlayPanelModule
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
@@ -18,8 +33,15 @@ export class HomeComponent {
   searchQuery = '';
   showSuggestions = false;
   searchSuggestions: ChatUser[] = [];
+  currentUser$;
 
-  constructor(private chatService: ChatService) {
+  constructor(
+    private chatService: ChatService,
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.currentUser$ = this.authService.currentUser$;
+    
     // Subscribe to user selection to show chat view on mobile
     this.chatService.selectedUser$.subscribe(user => {
       if (user) {
@@ -57,5 +79,10 @@ export class HomeComponent {
     setTimeout(() => {
       this.showSuggestions = false;
     }, 200);
+  }
+
+  onLogout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 } 

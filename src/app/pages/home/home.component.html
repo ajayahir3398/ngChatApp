@@ -2,30 +2,49 @@
   <div class="chat-list-container" [class.hidden]="showChatView">
     <div class="chat-list-header">
       <div class="profile-info">
-        <div class="profile-avatar">
-          <span>M</span>
-        </div>
+        <p-avatar 
+          [label]="(currentUser$ | async)?.name?.charAt(0) || 'U'"
+          styleClass="mr-2"
+          size="large"
+          [style]="{'background-color': '#3b82f6'}"
+          shape="circle">
+        </p-avatar>
         <div class="profile-details">
-          <h1>Mikael Dan</h1>
+          <h1>{{ (currentUser$ | async)?.name || 'User' }}</h1>
           <p>Online</p>
         </div>
+        <p-button 
+          icon="pi pi-sign-out" 
+          severity="secondary" 
+          text
+          (onClick)="onLogout()"
+          styleClass="p-button-rounded">
+        </p-button>
       </div>
     </div>
     <div class="search-container">
       <div class="search-input-wrapper">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" 
-               placeholder="Search chats..." 
-               [(ngModel)]="searchQuery"
-               (input)="onSearch()"
-               (blur)="onSearchBlur()">
+        <span class="p-input-icon-left w-full">
+          <i class="pi pi-search"></i>
+          <input 
+            pInputText 
+            type="text" 
+            class="w-full"
+            placeholder="Search chats..." 
+            [(ngModel)]="searchQuery"
+            (input)="onSearch()"
+            (blur)="onSearchBlur()">
+        </span>
         <div class="search-suggestions" *ngIf="showSuggestions && searchSuggestions.length > 0">
           <div class="suggestion-item" 
                *ngFor="let user of searchSuggestions"
                (click)="onSuggestionClick(user)">
-            <div class="suggestion-avatar">
-              <span>{{ user.avatar }}</span>
-            </div>
+            <p-avatar 
+              [label]="user.avatar || user.name.charAt(0) || 'U'"
+              size="normal"
+              [style]="{'background-color': '#3b82f6'}"
+              shape="circle">
+            </p-avatar>
             <div class="suggestion-details">
               <h3>{{ user.name }}</h3>
               <p>{{ user.status }}</p>
