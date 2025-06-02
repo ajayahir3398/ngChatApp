@@ -5,7 +5,7 @@ namespace ChatApi.Models
     public class LoginRequest
     {
         [Required]
-        public required string Username { get; set; }
+        public required string UserName { get; set; }
         
         [Required]
         public required string Password { get; set; }
@@ -15,7 +15,7 @@ namespace ChatApi.Models
     {
         [Required]
         [MinLength(3)]
-        public required string Username { get; set; }
+        public required string UserName { get; set; }
         
         [Required]
         [MinLength(6)]

@@ -9,7 +9,7 @@
         <span>{{ selectedUser.avatar }}</span>
       </div>
       <div class="user-details" (click)="onUserDetailsClick()">
-        <h2>{{ selectedUser.name }}</h2>
+        <h2>{{ selectedUser.userName }}</h2>
         <p>{{ selectedUser.status }}</p>
       </div>
     </div>
@@ -28,13 +28,13 @@
 
   <!-- Messages Area -->
   <div class="messages-area">
-    <div *ngFor="let message of messages" class="message-wrapper" [ngClass]="{'message-sent': message.sender.id === currentUserId}">
+    <div *ngFor="let message of messages()" class="message-wrapper" [ngClass]="{'message-sent': message.sender.id === currentUserId}">
       <div class="message-bubble" [ngClass]="{
              'message-sent': message.sender.id === currentUserId,
              'message-received': message.sender.id !== currentUserId
            }">
         <div class="message-header" *ngIf="message.sender.id !== currentUserId">
-          <span class="sender-name">{{ message.sender.name }}</span>
+          <span class="sender-name">{{ message.sender.userName }}</span>
         </div>
         <p class="message-content">{{ message.content }}</p>
         <p class="timestamp">{{ message.timestamp | date:'shortTime' }}</p>

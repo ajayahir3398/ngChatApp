@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, ChatUser, Message } from '../../services/chat.service';
@@ -15,7 +15,7 @@ import { AuthService } from '../../services/auth.service';
 export class ChatViewComponent implements OnInit {
   @Output() backClick = new EventEmitter<void>();
   @Input() selectedUser: ChatUser | null = null;
-  messages: Message[] = [];
+  messages = signal<Message[]>([]);
   newMessage: string = '';
   showUserDetails = false;
   currentUserId: string = '';
@@ -27,7 +27,7 @@ export class ChatViewComponent implements OnInit {
     this.currentUserId = this.authService.getCurrentUserId();
     
     this.chatService.getMessages().subscribe(messages => {
-      this.messages = messages;
+      this.messages.set(messages);
     });
   }
 
@@ -36,7 +36,8 @@ export class ChatViewComponent implements OnInit {
       this.selectedUser = user;
       if (user) {
         this.chatService.getMessagesForUser(user.id).subscribe(messages => {
-          this.messages = messages;
+          this.chatService.setMessages(messages);
+          this.messages.set(messages);
         });
       }
     });
@@ -46,7 +47,7 @@ export class ChatViewComponent implements OnInit {
     if (this.newMessage.trim() && this.selectedUser) {
       this.chatService.sendMessage(this.newMessage, this.selectedUser.id);
       this.chatService.getMessagesForUser(this.selectedUser.id).subscribe(messages => {
-        this.messages = messages;
+        this.messages.set(messages);
       });
       this.newMessage = '';
     }

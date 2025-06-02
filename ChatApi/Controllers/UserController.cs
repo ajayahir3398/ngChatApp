@@ -26,7 +26,7 @@ namespace ChatApi.Controllers
             {
                 Id = u.Id,
                 Name = u.UserName ?? string.Empty,
-                Username = u.UserName ?? string.Empty,
+                UserName = u.UserName ?? string.Empty,
                 Avatar = u.Avatar ?? string.Empty,
                 Status = u.Status
             }).ToList();
@@ -43,7 +43,7 @@ namespace ChatApi.Controllers
             {
                 Id = user.Id,
                 Name = user.UserName ?? string.Empty,
-                Username = user.UserName ?? string.Empty,
+                UserName = user.UserName ?? string.Empty,
                 Avatar = user.Avatar ?? string.Empty,
                 Status = user.Status
             };
@@ -54,7 +54,7 @@ namespace ChatApi.Controllers
         {
             var applicationUser = new ApplicationUser
             {
-                UserName = user.Username,
+                UserName = user.UserName,
                 Avatar = user.Avatar,
                 Status = user.Status
             };
@@ -72,7 +72,7 @@ namespace ChatApi.Controllers
             if (applicationUser == null)
                 return NotFound();
 
-            applicationUser.UserName = user.Username;
+            applicationUser.UserName = user.UserName;
             applicationUser.Avatar = user.Avatar;
             applicationUser.Status = user.Status;
 

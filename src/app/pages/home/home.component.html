@@ -40,13 +40,13 @@
                *ngFor="let user of searchSuggestions"
                (click)="onSuggestionClick(user)">
             <p-avatar 
-              [label]="user.avatar || user.name.charAt(0) || 'U'"
+              [label]="user.avatar || user.userName.charAt(0) || 'U'"
               size="normal"
               [style]="{'background-color': '#3b82f6'}"
               shape="circle">
             </p-avatar>
             <div class="suggestion-details">
-              <h3>{{ user.name }}</h3>
+              <h3>{{ user.userName }}</h3>
               <p>{{ user.status }}</p>
             </div>
           </div>

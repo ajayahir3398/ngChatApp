@@ -60,7 +60,7 @@ export class HomeComponent {
     if (this.searchQuery.trim()) {
       this.chatService.getUsers().subscribe(users => {
         this.searchSuggestions = users.filter(user => 
-          user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+          user.userName.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
         this.showSuggestions = true;
       });

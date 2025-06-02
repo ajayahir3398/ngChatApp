@@ -27,12 +27,12 @@ namespace ChatApi.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
         {
-            if (await _userManager.FindByNameAsync(request.Username) != null)
-                return BadRequest("Username already exists");
+            if (await _userManager.FindByNameAsync(request.UserName) != null)
+                return BadRequest("UserName already exists");
 
             var user = new ApplicationUser
             {
-                UserName = request.Username,
+                UserName = request.UserName,
                 Avatar = request.Avatar,
                 Status = "offline"
             };
@@ -48,7 +48,7 @@ namespace ChatApi.Controllers
                 {
                     Id = user.Id,
                     Name = user.UserName ?? string.Empty,
-                    Username = user.UserName ?? string.Empty,
+                    UserName = user.UserName ?? string.Empty,
                     Avatar = user.Avatar ?? string.Empty,
                     Status = user.Status ?? string.Empty
                 }
@@ -58,7 +58,7 @@ namespace ChatApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponse>> Login(LoginRequest request)
         {
-            var user = await _userManager.FindByNameAsync(request.Username);
+            var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null)
                 return Unauthorized("Invalid username or password");
 
@@ -73,7 +73,7 @@ namespace ChatApi.Controllers
                 {
                     Id = user.Id,
                     Name = user.UserName ?? string.Empty,
-                    Username = user.UserName ?? string.Empty,
+                    UserName = user.UserName ?? string.Empty,
                     Avatar = user.Avatar ?? string.Empty,
                     Status = user.Status ?? string.Empty
                 }

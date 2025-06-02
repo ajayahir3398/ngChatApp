@@ -16,7 +16,7 @@ export interface Message {
 
 export interface ChatUser {
   id: string;
-  name: string;
+  userName: string;
   lastMessage: string;
   status: 'online' | 'offline';
   avatar: string;
@@ -76,6 +76,7 @@ export class ChatService {
 
   private addListeners() {
     this.hubConnection.on('ReceiveMessage', (message: Message) => {
+      console.log('Received message:', message);
       const currentMessages = this.messagesSubject.value;
       this.messagesSubject.next([...currentMessages, message]);
 
@@ -176,5 +177,9 @@ export class ChatService {
 
   public getMessagesForUser(userId: string): Observable<Message[]> {
     return this.http.get<Message[]>(`${this.apiUrl}/message/user/${userId}`, this.getHttpOptions());
+  }
+
+  public setMessages(messages: Message[]): void {
+    this.messagesSubject.next(messages);
   }
 } 
