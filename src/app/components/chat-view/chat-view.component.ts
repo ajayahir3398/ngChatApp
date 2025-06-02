@@ -1,8 +1,9 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, ChatUser, Message } from '../../services/chat.service';
 import { UserDetailsComponent } from '../user-details/user-details.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-chat-view',
@@ -13,12 +14,22 @@ import { UserDetailsComponent } from '../user-details/user-details.component';
 })
 export class ChatViewComponent implements OnInit {
   @Output() backClick = new EventEmitter<void>();
+  @Input() selectedUser: ChatUser | null = null;
   messages: Message[] = [];
-  selectedUser: ChatUser | null = null;
   newMessage: string = '';
-  showUserDetails: boolean = false;
+  showUserDetails = false;
+  currentUserId: string = '';
 
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private authService: AuthService
+  ) {
+    this.currentUserId = this.authService.getCurrentUserId();
+    
+    this.chatService.getMessages().subscribe(messages => {
+      this.messages = messages;
+    });
+  }
 
   ngOnInit() {
     this.chatService.selectedUser$.subscribe(user => {

@@ -1,28 +1,39 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatApi.Models
 {
-    public class ChatDbContext : DbContext
+    public class ChatDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ChatDbContext(DbContextOptions<ChatDbContext> options) : base(options) { }
+        public ChatDbContext(DbContextOptions<ChatDbContext> options)
+            : base(options)
+        {
+        }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChatConnection> ChatConnections { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
-            modelBuilder.Entity<Message>()
+            builder.Entity<Message>()
                 .HasOne(m => m.Sender)
-                .WithMany(u => u.SentMessages)
+                .WithMany()
                 .HasForeignKey(m => m.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ChatConnection>()
-                .HasIndex(c => c.ConnectionId)
-                .IsUnique();
+            builder.Entity<Message>()
+                .HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ChatConnection>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 } 

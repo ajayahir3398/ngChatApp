@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ChatApi.Models;
 using ChatApi.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace ChatApi.Controllers
 {
@@ -11,50 +12,71 @@ namespace ChatApi.Controllers
     {
         private readonly ChatDbContext _context;
         private readonly AuthService _authService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthController(ChatDbContext context, AuthService authService)
+        public AuthController(
+            ChatDbContext context, 
+            AuthService authService,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _authService = authService;
+            _userManager = userManager;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register(RegisterRequest request)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
+            if (await _userManager.FindByNameAsync(request.Username) != null)
                 return BadRequest("Username already exists");
 
-            var user = new User
+            var user = new ApplicationUser
             {
-                Username = request.Username,
-                Name = request.Username,
-                PasswordHash = _authService.HashPassword(request.Password),
-                Avatar = request.Avatar
+                UserName = request.Username,
+                Avatar = request.Avatar,
+                Status = "offline"
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors.First().Description);
 
             return new AuthResponse
             {
                 Token = _authService.GenerateJwtToken(user),
-                User = user
+                User = new User
+                {
+                    Id = user.Id,
+                    Name = user.UserName ?? string.Empty,
+                    Username = user.UserName ?? string.Empty,
+                    Avatar = user.Avatar ?? string.Empty,
+                    Status = user.Status ?? string.Empty
+                }
             };
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponse>> Login(LoginRequest request)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == request.Username);
+            var user = await _userManager.FindByNameAsync(request.Username);
+            if (user == null)
+                return Unauthorized("Invalid username or password");
 
-            if (user == null || !_authService.VerifyPassword(request.Password, user.PasswordHash))
+            var isValid = await _userManager.CheckPasswordAsync(user, request.Password);
+            if (!isValid)
                 return Unauthorized("Invalid username or password");
 
             return new AuthResponse
             {
                 Token = _authService.GenerateJwtToken(user),
-                User = user
+                User = new User
+                {
+                    Id = user.Id,
+                    Name = user.UserName ?? string.Empty,
+                    Username = user.UserName ?? string.Empty,
+                    Avatar = user.Avatar ?? string.Empty,
+                    Status = user.Status ?? string.Empty
+                }
             };
         }
     }

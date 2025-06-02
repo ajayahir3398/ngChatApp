@@ -58,10 +58,12 @@ export class HomeComponent {
 
   onSearch() {
     if (this.searchQuery.trim()) {
-      const users = this.chatService.getUsers();
-      this.searchSuggestions = users.filter(user => 
-        user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-      );
+      this.chatService.getUsers().subscribe(users => {
+        this.searchSuggestions = users.filter(user => 
+          user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+        this.showSuggestions = true;
+      });
       this.showSuggestions = true;
     } else {
       this.showSuggestions = false;

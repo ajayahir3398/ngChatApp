@@ -3,7 +3,7 @@
   <div class="chat-header">
     <div class="user-info">
       <button class="back-button" (click)="onBackClick()">
-        <i class="fas fa-arrow-left"></i>
+        <i class="pi pi-arrow-left"></i>
       </button>
       <div class="avatar" (click)="onUserDetailsClick()">
         <span>{{ selectedUser.avatar }}</span>
@@ -15,26 +15,29 @@
     </div>
     <div class="header-actions">
       <button class="action-btn" title="Voice Call">
-        <i class="fas fa-phone"></i>
+        <i class="pi pi-phone"></i>
       </button>
       <button class="action-btn" title="Video Call">
-        <i class="fas fa-video"></i>
+        <i class="pi pi-video"></i>
       </button>
       <button class="action-btn" title="More Options">
-        <i class="fas fa-ellipsis-v"></i>
+        <i class="pi pi-ellipsis-v"></i>
       </button>
     </div>
   </div>
 
   <!-- Messages Area -->
   <div class="messages-area">
-    <div *ngFor="let message of messages" class="message-wrapper" [ngClass]="{'message-sent': message.sender === 'me'}">
+    <div *ngFor="let message of messages" class="message-wrapper" [ngClass]="{'message-sent': message.sender.id === currentUserId}">
       <div class="message-bubble" [ngClass]="{
-             'message-sent': message.sender === 'me',
-             'message-received': message.sender === 'other'
+             'message-sent': message.sender.id === currentUserId,
+             'message-received': message.sender.id !== currentUserId
            }">
+        <div class="message-header" *ngIf="message.sender.id !== currentUserId">
+          <span class="sender-name">{{ message.sender.name }}</span>
+        </div>
         <p class="message-content">{{ message.content }}</p>
-        <p class="timestamp">{{ message.timestamp }}</p>
+        <p class="timestamp">{{ message.timestamp | date:'shortTime' }}</p>
       </div>
     </div>
   </div>
@@ -43,14 +46,14 @@
   <div class="input-area">
     <div class="input-container">
       <button class="input-action-btn" title="Add Attachment">
-        <i class="fas fa-paperclip"></i>
+        <i class="pi pi-paperclip"></i>
       </button>
       <input type="text" [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="Type a message...">
       <button class="input-action-btn" title="Add Emoji">
-        <i class="fas fa-smile"></i>
+        <i class="pi pi-smile"></i>
       </button>
       <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">
-        <i class="fas fa-paper-plane"></i>
+        <i class="pi pi-send"></i>
       </button>
     </div>
   </div>

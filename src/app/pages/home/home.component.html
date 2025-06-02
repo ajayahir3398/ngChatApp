@@ -1,5 +1,5 @@
 <div class="home-container">
-  <div class="chat-list-container" [class.hidden]="showChatView">
+  <div class="chat-list-container">
     <div class="chat-list-header">
       <div class="profile-info">
         <p-avatar 
@@ -58,7 +58,7 @@
     </div>
   </div>
 
-  <div class="chat-view-container" [class.hidden]="!showChatView">
+  <div class="chat-view-container">
     <app-chat-view (backClick)="onBackClick()"></app-chat-view>
   </div>
 </div> 

@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using ChatApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ChatApi.Controllers
 {
@@ -10,43 +11,54 @@ namespace ChatApi.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly ChatDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserController(ChatDbContext context)
+        public UserController(UserManager<ApplicationUser> userManager)
         {
-            _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users
-                .Select(u => new User
-                {
-                    Id = u.Id,
-                    Name = u.Name,
-                    Username = u.Username,
-                    PasswordHash = u.PasswordHash,
-                    Avatar = u.Avatar,
-                    Status = u.Status
-                })
-                .ToListAsync();
+            var users = await _userManager.Users.ToListAsync();
+            return users.Select(u => new User
+            {
+                Id = u.Id,
+                Name = u.UserName ?? string.Empty,
+                Username = u.UserName ?? string.Empty,
+                Avatar = u.Avatar ?? string.Empty,
+                Status = u.Status
+            }).ToList();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
-            return user;
+
+            return new User
+            {
+                Id = user.Id,
+                Name = user.UserName ?? string.Empty,
+                Username = user.UserName ?? string.Empty,
+                Avatar = user.Avatar ?? string.Empty,
+                Status = user.Status
+            };
         }
 
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            var applicationUser = new ApplicationUser
+            {
+                UserName = user.Username,
+                Avatar = user.Avatar,
+                Status = user.Status
+            };
+            await _userManager.CreateAsync(applicationUser);
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
@@ -56,17 +68,15 @@ namespace ChatApi.Controllers
             if (id != user.Id)
                 return BadRequest();
 
-            _context.Entry(user).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _context.Users.AnyAsync(u => u.Id == id))
-                    return NotFound();
-                throw;
-            }
+            var applicationUser = await _userManager.FindByIdAsync(id);
+            if (applicationUser == null)
+                return NotFound();
+
+            applicationUser.UserName = user.Username;
+            applicationUser.Avatar = user.Avatar;
+            applicationUser.Status = user.Status;
+
+            await _userManager.UpdateAsync(applicationUser);
             return NoContent();
         }
     }

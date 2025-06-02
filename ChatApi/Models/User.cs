@@ -21,7 +21,7 @@ namespace ChatApi.Models
         public string PasswordHash { get; set; } = string.Empty;
         
         [MaxLength(100)]
-        public required string Avatar { get; set; }
+        public string Avatar { get; set; } = "https://i.pinimg.com/originals/51/f6/fb/51f6fb256629fc755b8870c801092942.png";
         
         public string Status { get; set; } = "offline";
         

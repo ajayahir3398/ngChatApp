@@ -24,7 +24,9 @@ export class ChatListComponent implements OnInit {
   constructor(private chatService: ChatService) {}
 
   ngOnInit() {
-    this.chats = this.chatService.getUsers();
+    this.chatService.getUsers().subscribe(users => {
+      this.chats = users;
+    });
     this.chatService.selectedUser$.subscribe(user => {
       this.selectedUser = user;
     });

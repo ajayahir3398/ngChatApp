@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using ChatApi.Models;
 using Microsoft.IdentityModel.Tokens;
@@ -10,46 +9,36 @@ namespace ChatApi.Services
     public class AuthService
     {
         private readonly IConfiguration _configuration;
-        private readonly ChatDbContext _context;
 
-        public AuthService(IConfiguration configuration, ChatDbContext context)
+        public AuthService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _context = context;
         }
 
-        public string GenerateJwtToken(User user)
+        public string GenerateJwtToken(ApplicationUser user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtSecret = _configuration["Jwt:Secret"];
-            if (jwtSecret == null)
-                throw new InvalidOperationException("JWT secret is not configured");
-            var key = Encoding.ASCII.GetBytes(jwtSecret);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            var claims = new[]
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(ClaimTypes.Name, user.Username)
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty)
             };
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
+            var key = new SymmetricSecurityKey(
+                Encoding.ASCII.GetBytes(
+                    _configuration["Jwt:Secret"] 
+                    ?? throw new InvalidOperationException("JWT secret key is not configured")
+                )
+            );
 
-        public string HashPassword(string password)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(password);
-        }
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        public bool VerifyPassword(string password, string passwordHash)
-        {
-            return BCrypt.Net.BCrypt.Verify(password, passwordHash);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddDays(7),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
